@@ -1,4 +1,3 @@
-
 function _git_branch_name
   echo (command git symbolic-ref HEAD 2> /dev/null | sed -e 's|^refs/heads/||')
 end
@@ -52,7 +51,7 @@ function show_host -d "Show host & user name"
     else
       echo -n (set_color blue)
     end
-    echo -n ''(hostname|cut -d . -f 1)ˇ$USER' ' (set color normal)
+    echo -n ''$USER@(hostname|cut -d . -f 1)' ' (set color normal)
   end
 end
 
@@ -74,7 +73,7 @@ function show_git_info -d "Show git branch and dirty state"
     set_color -o
     if [ (_is_git_dirty) ]
       set_color -o red
-      echo -ne "$git_branch× "
+      echo -ne "$git_branch x "
     else
       set_color -o green
       echo -ne "$git_branch "
@@ -95,9 +94,14 @@ function fish_prompt
   # The newline before prompts
   echo ''
 
-  show_ssh_status
+  # show_ssh_status
   show_host
   show_cwd
   show_git_info
+  if set -q VIRTUAL_ENV
+    set env_name (basename $VIRTUAL_ENV)
+    echo -n -s (set_color blue white) "($env_name) " (set_color normal)
+  end
   show_prompt_char
 end
+
